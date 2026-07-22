@@ -1,5 +1,10 @@
 # FinStream 💳⚡
 
+[![Python Version](https://img.shields.io/badge/python-3.11%2B-blue.svg)](https://www.python.org/)
+[![GCP](https://img.shields.io/badge/GCP-Pub%2FSub%20%7C%20Cloud%20Functions%20%7C%20BigQuery-orange.svg)](https://cloud.google.com/)
+[![Terraform](https://img.shields.io/badge/terraform-v1.3.0%2B-purple.svg)](https://www.terraform.io/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
 > **Real-Time Financial Transactions Ingestion & Analytics Pipeline**
 
 FinStream is an event-driven, serverless data pipeline hosted on Google Cloud Platform (GCP). It simulates high-volume transactional event streams, processes and transforms payloads in real time, loads structured data into BigQuery for rapid analytics, and executes automated reconciliation with external financial settlement files.
@@ -39,7 +44,7 @@ FinStream is an event-driven, serverless data pipeline hosted on Google Cloud Pl
 
 ## 🛠️ Tech Stack
 
-- **Language:** Python 3.11
+- **Language:** Python 3.11+
 - **Cloud Provider:** Google Cloud Platform (GCP)
 - **Streaming & Serverless:** GCP Pub/Sub, GCP Cloud Functions (Gen 2)
 - **Data Warehouse:** GCP BigQuery
@@ -83,6 +88,21 @@ finstream/
 * `gcloud` CLI & `terraform` installed locally
 * Python 3.11+
 
+### Local Environment Setup
+
+```bash
+# Clone the repository
+git clone https://github.com/UXxArunjay/FinStream.git
+cd FinStream
+
+# Create and activate local virtual environment
+python -m venv .venv
+source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+
+# Install dependencies
+pip install -r simulator/requirements.txt -r cloud_functions/ingest_transaction/requirements.txt pandas pytest
+```
+
 ### Step 1: Provision GCP Infrastructure via Terraform
 
 ```bash
@@ -110,7 +130,6 @@ gcloud functions deploy ingest_transaction \
 
 ```bash
 cd simulator
-pip install -r requirements.txt
 
 # Run live against GCP Pub/Sub:
 export GCP_PROJECT_ID="YOUR_GCP_PROJECT_ID"
@@ -125,7 +144,6 @@ cd ..
 
 ```bash
 cd reconciliation
-pip install pandas google-cloud-bigquery
 
 # Reconcile against live BigQuery table:
 python reconciler.py --date 2026-07-22 --settlement-file sample_external_settlement.csv
@@ -142,7 +160,7 @@ cd ..
 Run all unit tests across generator, reconciler, and Cloud Function validation:
 
 ```bash
-python -m unittest discover -s tests -p "test_*.py"
+python -m pytest
 ```
 
 ---
