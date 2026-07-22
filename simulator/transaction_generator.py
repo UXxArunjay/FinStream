@@ -138,7 +138,7 @@ def parse_args():
 if __name__ == "__main__":
     args = parse_args()
     run_simulator(
-        project_id=args.project-id,
+        project_id=args.project_id,
         topic_id=args.topic_id,
         rate=args.rate,
         total_count=args.count,

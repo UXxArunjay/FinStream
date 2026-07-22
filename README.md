@@ -84,8 +84,8 @@ finstream/
 
 ### Prerequisites
 
-* GCP Account with billing enabled
-* `gcloud` CLI & `terraform` installed locally
+* GCP Account with billing enabled (optional for local dry-run mode)
+* `gcloud` CLI & `terraform` installed locally (optional for local dry-run mode)
 * Python 3.11+
 
 ### Local Environment Setup
@@ -95,9 +95,16 @@ finstream/
 git clone https://github.com/UXxArunjay/FinStream.git
 cd FinStream
 
-# Create and activate local virtual environment
+# Create local virtual environment
 python -m venv .venv
-source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+
+# Activate virtual environment:
+# On Linux/macOS:
+source .venv/bin/activate
+# On Windows (PowerShell):
+.\.venv\Scripts\Activate.ps1
+# On Windows (CMD):
+.\.venv\Scripts\activate.bat
 
 # Install dependencies
 pip install -r simulator/requirements.txt -r cloud_functions/ingest_transaction/requirements.txt pandas pytest
@@ -129,28 +136,27 @@ gcloud functions deploy ingest_transaction \
 ### Step 3: Run Event Simulator
 
 ```bash
-cd simulator
+# Run locally in dry-run mode (no GCP credentials required):
+python simulator/transaction_generator.py --dry-run --count 20
+# Or on Windows using virtual environment Python directly:
+.\.venv\Scripts\python simulator/transaction_generator.py --dry-run --count 20
 
 # Run live against GCP Pub/Sub:
-export GCP_PROJECT_ID="YOUR_GCP_PROJECT_ID"
-python transaction_generator.py --rate 10
-
-# Or run locally in dry-run mode (without GCP credentials):
-python transaction_generator.py --dry-run --count 20
-cd ..
+export GCP_PROJECT_ID="YOUR_GCP_PROJECT_ID"  # PowerShell: $env:GCP_PROJECT_ID="YOUR_GCP_PROJECT_ID"
+python simulator/transaction_generator.py --rate 10
 ```
 
 ### Step 4: Run Reconciliation Engine
 
 ```bash
-cd reconciliation
+# Run locally in dry-run mode (no GCP credentials required):
+python reconciliation/reconciler.py --dry-run --date 2026-07-22 --settlement-file reconciliation/sample_external_settlement.csv
+
+# Export detailed reconciliation CSV output report locally:
+python reconciliation/reconciler.py --dry-run --date 2026-07-22 --settlement-file reconciliation/sample_external_settlement.csv --output-csv detailed_report.csv
 
 # Reconcile against live BigQuery table:
-python reconciler.py --date 2026-07-22 --settlement-file sample_external_settlement.csv
-
-# Or run locally in dry-run mode:
-python reconciler.py --dry-run --date 2026-07-22 --settlement-file sample_external_settlement.csv
-cd ..
+python reconciliation/reconciler.py --date 2026-07-22 --settlement-file reconciliation/sample_external_settlement.csv
 ```
 
 ---
@@ -160,7 +166,14 @@ cd ..
 Run all unit tests across generator, reconciler, and Cloud Function validation:
 
 ```bash
-python -m pytest
+# With activated virtual environment:
+pytest
+
+# Or run directly via virtual environment Python:
+# On Windows:
+.\.venv\Scripts\python -m pytest
+# On Linux/macOS:
+./.venv/bin/python -m pytest
 ```
 
 ---

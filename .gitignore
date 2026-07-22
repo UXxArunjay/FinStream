@@ -58,6 +58,7 @@ service_account.json
 # Logs & Outputs
 *.log
 reconciliation_report_*.csv
+detailed_report.csv
 
 # OS & IDE
 .DS_Store
